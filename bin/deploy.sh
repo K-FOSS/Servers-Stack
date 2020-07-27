@@ -77,9 +77,9 @@ fi
 for HOST in ${HOSTS}; do
   echo "HOST: ${HOST}"
 
-  docker run -it --rm -v ${PWD}/Scripts/SSH/passwd:/etc/passwd -v ${PWD}:/tmp/source:ro -v ${TMP_PATH}/rclone:/config/rclone -e XDG_CONFIG_HOME=/config -v ${TMP_PATH}/SSH:/config/.ssh -e RCLONE_SFTP_HOST=${HOST} kristianfoss/programs-rclone:rclone-main-scratch sync /tmp/source Server:TMP/Lab2
+  docker run -it --rm -v ${PWD}/Scripts/SSH/passwd:/etc/passwd -v ${PWD}:/tmp/source:ro -v ${TMP_PATH}/rclone:/config/rclone -e XDG_CONFIG_HOME=/config -v ${TMP_PATH}/SSH:/config/.ssh -e RCLONE_SFTP_HOST=${HOST} kristianfoss/programs-rclone:rclone-main-scratch sync /tmp/source Server:Server
 
-  ${OPENSSH_RUN_CMD} ${OPENSSH_SSH_IMAGE} ${USERNAME}@${HOST} 'cd ~/TMP/Lab2 && docker-compose up -d MetricBeat Filebeat' 
+  ${OPENSSH_RUN_CMD} ${OPENSSH_SSH_IMAGE} ${USERNAME}@${HOST} 'cd ~/TMP/Lab2 && docker-compose restart MetricBeat Filebeat' 
 done
 
 docker-compose up -d MetricBeat Filebeat
