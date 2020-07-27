@@ -82,4 +82,4 @@ for HOST in ${HOSTS}; do
   ${OPENSSH_RUN_CMD} ${OPENSSH_SSH_IMAGE} ${USERNAME}@${HOST} 'cd ~/TMP/Lab2 && docker-compose restart MetricBeat Filebeat' 
 done
 
-docker-compose up -d MetricBeat Filebeat
+docker-compose restart MetricBeat Filebeat
