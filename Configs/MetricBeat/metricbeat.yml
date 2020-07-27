@@ -1,0 +1,62 @@
+metricbeat.max_start_delay: 10s
+
+metricbeat.modules:
+  - module: system
+    metricsets:
+      - cpu # CPU usage
+      - load # CPU load averages
+      - memory # Memory usage
+      # - network # Network IO
+      #- process # Per process metrics
+      # - process_summary # Process summary
+      - uptime # System Uptime
+      # - socket_summary # Socket summary
+      #- core           # Per CPU core usage
+      #- diskio         # Disk IO
+      #- filesystem     # File system usage for each mountpoint
+      #- fsstat         # File system summary metrics
+      #- raid           # Raid
+      #- socket         # Sockets and connection info (linux only)
+      #- service        # systemd service information
+    enabled: true
+    period: 1m
+    processes: ['.*']
+
+    # Configure the metric types that are included by these metricsets.
+    cpu.metrics: ['percentages', 'normalized_percentages'] # The other available option is ticks.
+    core.metrics: ['percentages']
+
+  #-------------------------------- Docker Module --------------------------------
+  - module: docker
+    metricsets:
+      - container
+      - cpu
+      - diskio
+      - event
+      - healthcheck
+      - info
+      - image
+      - memory
+      - network
+    hosts: ['unix:///var/run/docker.sock']
+    period: 1m
+    enabled: true
+
+# The following example enriches each event with host metadata.
+#
+processors:
+  - add_host_metadata: ~
+
+output.elasticsearch:
+  # Boolean flag to enable or disable the output module.
+  enabled: true
+
+  # Array of hosts to connect to.
+  # Scheme and port can be left out and will be set to the default (http and 9200)
+  # In case you specify and additional path, the scheme is required: http://localhost:9200/path
+  # IPv6 addresses should always be defined as: https://[2001:db8::1]:9200
+  hosts: ['172.20.0.201:9200']
+
+logging.level: warning
+logging.json: true
+logging.metrics.enabled: false

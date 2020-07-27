@@ -1,0 +1,43 @@
+# =========================== Modules configuration ============================
+auditbeat.modules:
+  # The auditd module collects events from the audit framework in the Linux
+  # kernel. You need to specify audit rules for the events that you want to audit.
+  - module: auditd
+    resolve_ids: true
+    failure_mode: silent
+    backlog_limit: 8196
+    rate_limit: 0
+    include_raw_message: false
+    include_warnings: false
+
+  - module: system
+    datasets:
+      - host
+      - login
+      - package
+      - process
+      - socket
+      - user
+    period: 10s
+    state.period: 12h
+
+    socket.include_localhost: false
+
+    user.detect_password_changes: true
+
+    # Set to true to publish fields with null values in events.
+    #keep_null: false
+
+output.elasticsearch:
+  # Boolean flag to enable or disable the output module.
+  enabled: true
+
+  # Array of hosts to connect to.
+  # Scheme and port can be left out and will be set to the default (http and 9200)
+  # In case you specify and additional path, the scheme is required: http://localhost:9200/path
+  # IPv6 addresses should always be defined as: https://[2001:db8::1]:9200
+  hosts: ['172.20.0.201:9200']
+
+logging.level: warning
+logging.json: true
+logging.metrics.enabled: false

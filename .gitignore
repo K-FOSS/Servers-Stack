@@ -1,0 +1,4 @@
+
+ENVs/*.env
+!ENVs/*.env.example
+TMP

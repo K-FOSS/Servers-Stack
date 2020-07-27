@@ -1,0 +1,46 @@
+version: '3.7'
+
+services:
+  MetricBeat:
+    image: docker.elastic.co/beats/metricbeat:7.8.0
+    command: -e -system.hostfs=/hostfs --strict.perms=false
+    restart: unless-stopped
+    user: root
+    env_file: ENVs/ElasticStack.env
+    network_mode: host
+    security_opt:
+      - apparmor:unconfined
+      - seccomp:unconfined
+    cap_add:
+      - sys_ptrace
+      - dac_read_search
+    volumes:
+      - ./Configs/MetricBeat/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
+      - /proc:/hostfs/proc:ro
+      - /:/hostfs:ro
+
+  AuditBeat:
+    image: docker.elastic.co/beats/auditbeat:7.8.0
+    command: --strict.perms=false
+    restart: unless-stopped
+    user: root
+    privileged: true
+    cap_add:
+      - AUDIT_CONTROL
+      - AUDIT_READ
+    pid: host
+    volumes:
+      - ./Configs/AuditBeat/auditbeat.yml:/usr/share/auditbeat/auditbeat.yml:ro
+      - /:/hostfs:ro
+
+  Filebeat:
+    image: docker.elastic.co/beats/filebeat:7.8.0
+    command: --strict.perms=false
+    restart: unless-stopped
+    user: root
+    network_mode: host
+    volumes:
+      - ./Configs/FileBeat/filebeat.yml:/usr/share/filebeat/filebeat.yml
+      - /var/log:/tmp/log:ro

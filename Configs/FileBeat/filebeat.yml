@@ -1,0 +1,28 @@
+# List of inputs to fetch data.
+filebeat.modules:
+  - module: system
+    syslog:
+      enabled: true
+      var.paths: ['/tmp/log/syslog*']
+    auth:
+      enabled: true
+      var.paths: ['/tmp/log/auth.log*']
+
+# The following example enriches each event with host metadata.
+#
+processors:
+  - add_host_metadata: ~
+
+output.elasticsearch:
+  # Boolean flag to enable or disable the output module.
+  enabled: true
+
+  # Array of hosts to connect to.
+  # Scheme and port can be left out and will be set to the default (http and 9200)
+  # In case you specify and additional path, the scheme is required: http://localhost:9200/path
+  # IPv6 addresses should always be defined as: https://[2001:db8::1]:9200
+  hosts: ['172.20.0.201:9200']
+
+logging.level: warning
+logging.json: true
+logging.metrics.enabled: false
